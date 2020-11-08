@@ -13,6 +13,7 @@ const compression = require('compression');
 const morgan = require('morgan');
 const errorController = require('./controllers/error');
 const User = require('./models/user');
+const { v4:uuidv4 } = require('uuid');
 
 const MONGODB_URI =
 `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.nfz2q.mongodb.net/${process.env.MONGO_DATABASE}?retryWrites=true&w=majority`;
@@ -26,7 +27,14 @@ const csrfProtection = csrf();
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'image');
+  },
+  filename: (req, file, cb) => {
+    cb(null, uuidv4());
   }
+  //For mac or linux
+  /*filename: (req, file, cb) => {
+    cb(null, newDate().toISOString() + file.originalname);
+  }*/
 });
 
 const fileFilter = (req, file, cb) => {
